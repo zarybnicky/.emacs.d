@@ -1,11 +1,13 @@
-# Compiled
-*.elc
+*.elc        # Compiled
+.cask        # Packaging
+*~           # Backup files
 
-# Packaging
-.cask
-
-# Backup files
-*~
-
-# Undo-tree save-files
-*.~undo-tree
+.emacs.desktop
+.emacs.desktop.lock
+.python-environments
+ac-comphist.dat
+auto-save-list
+elpa
+projectile-bookmarks.eld
+saves
+server

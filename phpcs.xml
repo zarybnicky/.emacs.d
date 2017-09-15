@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<ruleset name="My first PHPMD rule set">
+  <rule ref="PEAR">
+    <exclude name="Generic.Files.LineEndings"/>
+    <exclude name="PEAR.ControlStructures.MultiLineCondition.StartWithBoolean"/>
+  </rule>
+</ruleset>
