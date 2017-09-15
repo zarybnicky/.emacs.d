@@ -8,6 +8,11 @@
 ac-comphist.dat
 auto-save-list
 elpa
+eshell
+ido.last
+projectile.cache
 projectile-bookmarks.eld
 saves
 server
+smex-items
+tramp
