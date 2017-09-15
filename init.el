@@ -244,16 +244,15 @@
       (flycheck-add-mode 'php 'web-mode)
       (flycheck-add-mode 'php-phpcs 'web-mode)
       (flycheck-add-mode 'php-phpmd 'web-mode))
-    :config
     (add-hook 'web-mode-hook 'flycheck-mode)
     (add-hook 'web-mode-hook 'projectile-mode))
 
 (use-package js-mode
-
   :mode "\\.js\\'"
-  :config
+  :init
   (add-hook 'js-mode-hook 'flycheck-mode)
-  (add-hook 'js-mode-hook 'projectile-mode))
+  (add-hook 'js-mode-hook 'projectile-mode)
+  (setq-default js-switch-indent-offset 2))
 
 (use-package json-mode
   :ensure t
@@ -283,8 +282,8 @@
                 ("C-c <down>"  . hs-show-all))
     :init
     (setq-default php-mode-coding-style 'symfony2)
-    (setq-default flycheck-phpmd-rulesets (list "c:/Users/Jakub/AppData/Roaming/.emacs.d/phpmd.xml"))
-    (setq-default flycheck-phpcs-standard "c:/Users/Jakub/AppData/Roaming/.emacs.d/phpcs.xml")
+    (setq-default flycheck-phpmd-rulesets (list (concat user-emacs-directory "phpmd.xml")))
+    (setq-default flycheck-phpcs-standard (concat user-emacs-directory "phpcs.xml"))
     (setq-default flycheck-phpcs-standard "PSR2")
     :config
     (use-package hideshow
@@ -439,16 +438,51 @@
     (fill-paragraph nil region)))
 (define-key global-map "\M-Q" 'unfill-paragraph)
 
+;; Open files in Docker containers like so: /docker:drunk_bardeen:/etc/passwd
+(push
+ (cons
+  "docker"
+  '((tramp-login-program "docker")
+    (tramp-login-args (("exec" "-it") ("%h") ("/bin/bash")))
+    (tramp-remote-shell "/bin/sh")
+    (tramp-remote-shell-args ("-i") ("-c"))))
+ tramp-methods)
+
+(defadvice tramp-completion-handle-file-name-all-completions
+  (around dotemacs-completion-docker activate)
+  "(tramp-completion-handle-file-name-all-completions \"\" \"/docker:\" returns
+    a list of active Docker container names, followed by colons."
+  (if (equal (ad-get-arg 1) "/docker:")
+      (let* ((dockernames-raw (shell-command-to-string "docker ps | awk '$NF != \"NAMES\" { print $NF \":\" }'"))
+             (dockernames (cl-remove-if-not
+                           #'(lambda (dockerline) (string-match ":$" dockerline))
+                           (split-string dockernames-raw "\n"))))
+        (setq ad-return-value dockernames))
+    ad-do-it))
+
+(defun sudo-edit (&optional arg)
+  "Edit currently visited file as root.
+
+With a prefix ARG prompt for a file to visit.
+Will also prompt for a file to visit if current
+buffer is not visiting a file."
+  (interactive "P")
+  (if (or arg (not buffer-file-name))
+      (find-file (concat "/sudo:root@localhost:"
+                         (ido-read-file-name "Find file(as root): ")))
+    (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
+
+(global-set-key (kbd "C-x C-r") 'sudo-edit)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(bmkp-last-as-first-bookmark-file "~\\.emacs.d\\bookmarks")
- '(hasky-stack-auto-target t)
  '(package-selected-packages
    (quote
-    (alert mediawiki intero hindent dante hasky-stack hasky-extensions haskell-mode yasnippet web-mode vimgolf use-package undo-tree unbound typing solarized-theme smex smart-mode-line sicp rainbow-delimiters projectile pretty-symbols powerline php-mode magit js2-mode jedi ido-completing-read+ helm guide-key fuzzy flycheck flx-ido expand-region editorconfig discover column-marker color-moccur bookmark+ auctex ag ace-jump-mode)))
+    (markdown-mode json-mode js-mode web-mode vimgolf use-package undo-tree unbound typing tide solarized-theme smex smart-mode-line sicp rainbow-delimiters py-autopep8 projectile pretty-symbols powerline php-refactor-mode php-mode offlineimap magit keyfreq js2-mode jedi ido-completing-read+ helm guide-key gnugo fuzzy flx-ido expand-region editorconfig ecb dockerfile-mode discover column-marker color-moccur bookmark+ benchmark-init bbdb auto-complete-c-headers auto-complete-auctex auctex ansi ag ace-jump-mode)))
  '(safe-local-variable-values
    (quote
     ((intero-project-root . "d:/projects/hledger")
