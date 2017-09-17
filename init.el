@@ -474,6 +474,33 @@ buffer is not visiting a file."
 
 (global-set-key (kbd "C-x C-r") 'sudo-edit)
 
+(use-package flyspell
+  :ensure t
+  :commands (flyspell-mode flyspell-prog-mode)
+  :init
+  (add-hook 'prog-mode-hook 'flyspell-prog-mode)
+  (add-hook 'text-mode-hook 'flyspell-mode)
+  :config
+  (cond
+   ((executable-find "aspell")
+    (setq ispell-program-name "aspell"
+          ispell-personal-dictionary "/Program Files (x86)/Aspell"
+          ispell-extra-args '("--sug-mode=ultra")))
+   ((executable-find "hunspell")
+    (setq ispell-program-name "hunspell")))
+  (with-eval-after-load 'auto-complete
+    (ac-flyspell-workaround))
+
+  (let ((langs '("czech" "english")))
+    (setq lang-ring (make-ring (length langs)))
+    (dolist (elem langs) (ring-insert lang-ring elem)))
+  (defun cycle-ispell-languages ()
+    (interactive)
+    (let ((lang (ring-ref lang-ring -1)))
+      (ring-insert lang-ring lang)
+      (ispell-change-dictionary lang)))
+  (global-set-key [f6] 'cycle-ispell-languages))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -482,7 +509,7 @@ buffer is not visiting a file."
  '(bmkp-last-as-first-bookmark-file "~\\.emacs.d\\bookmarks")
  '(package-selected-packages
    (quote
-    (markdown-mode json-mode js-mode web-mode vimgolf use-package undo-tree unbound typing tide solarized-theme smex smart-mode-line sicp rainbow-delimiters py-autopep8 projectile pretty-symbols powerline php-refactor-mode php-mode offlineimap magit keyfreq js2-mode jedi ido-completing-read+ helm guide-key gnugo fuzzy flx-ido expand-region editorconfig ecb dockerfile-mode discover column-marker color-moccur bookmark+ benchmark-init bbdb auto-complete-c-headers auto-complete-auctex auctex ansi ag ace-jump-mode)))
+    (hledger-mode alert mediawiki intero hindent dante hasky-stack hasky-extensions haskell-mode yasnippet web-mode vimgolf use-package undo-tree unbound typing solarized-theme smex smart-mode-line sicp rainbow-delimiters projectile pretty-symbols powerline php-mode magit js2-mode jedi ido-completing-read+ helm guide-key fuzzy flycheck flx-ido expand-region editorconfig discover column-marker color-moccur bookmark+ auctex ag ace-jump-mode)))
  '(safe-local-variable-values
    (quote
     ((intero-project-root . "d:/projects/hledger")
