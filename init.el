@@ -258,16 +258,24 @@
   :ensure t
   :mode "\\.json\\'")
 
-;; (use-package tide
-;;     :ensure t
-;;     :mode ("\\.ts\\'" . typescript-mode)
-;;     :init
-;;     (setq-default typescript-indent-level 4)
-;;     (setq-default typescript-expr-indent-offset 4)
-;;     :config
-;;     (add-hook 'typescript-mode-hook 'tide-setup)
-;;     (add-hook 'typescript-mode-hook 'flycheck-mode)
-;;     (add-hook 'typescript-mode-hook 'tide-hl-identifier-mode))
+(use-package tide
+    :ensure t
+    :mode ("\\.ts\\'" . typescript-mode)
+    :init
+    (setq-default typescript-indent-level 2)
+    (setq-default typescript-expr-indent-offset 2)
+    :config
+    (add-hook
+     'typescript-mode-hook
+     (lambda ()
+       (tide-setup)
+       (flycheck-mode +1)
+       (setq flycheck-check-syntax-automatically '(save mode-enabled))
+       (eldoc-mode +1)
+       (company-mode +1)
+       (add-hook 'before-save-hook 'tide-format-before-save)
+       (setq company-tooltip-align-annotations t)
+       (tide-hl-identifier-mode))))
 
 
 (setq-default flycheck-checker-error-threshold 2000)
@@ -499,7 +507,7 @@ buffer is not visiting a file."
     (let ((lang (ring-ref lang-ring -1)))
       (ring-insert lang-ring lang)
       (ispell-change-dictionary lang)))
-  (global-set-key [f6] 'cycle-ispell-languages))
+  (global-set-key [f7] 'cycle-ispell-languages))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -509,10 +517,19 @@ buffer is not visiting a file."
  '(bmkp-last-as-first-bookmark-file "~\\.emacs.d\\bookmarks")
  '(package-selected-packages
    (quote
-    (hledger-mode alert mediawiki intero hindent dante hasky-stack hasky-extensions haskell-mode yasnippet web-mode vimgolf use-package undo-tree unbound typing solarized-theme smex smart-mode-line sicp rainbow-delimiters projectile pretty-symbols powerline php-mode magit js2-mode jedi ido-completing-read+ helm guide-key fuzzy flycheck flx-ido expand-region editorconfig discover column-marker color-moccur bookmark+ auctex ag ace-jump-mode)))
+    (yaml-mode flycheck-yamllint tide shakespeare-mode hledger-mode alert mediawiki intero hindent dante hasky-stack hasky-extensions haskell-mode yasnippet web-mode vimgolf use-package undo-tree unbound typing solarized-theme smex smart-mode-line sicp rainbow-delimiters projectile pretty-symbols powerline php-mode magit js2-mode jedi ido-completing-read+ helm guide-key fuzzy flycheck flx-ido expand-region editorconfig discover column-marker color-moccur bookmark+ auctex ag ace-jump-mode)))
  '(safe-local-variable-values
    (quote
-    ((intero-project-root . "d:/projects/hledger")
+    ((eval progn
+           (add-to-list
+            (quote exec-path)
+            (concat
+             (locate-dominating-file default-directory ".dir-locals.el")
+             "node_modules/.bin/")))
+     (intero-project-root . "d:/projects/starlet")
+     (haskell-process-use-ghci . t)
+     (haskell-indent-spaces . 4)
+     (intero-project-root . "d:/projects/hledger")
      (dante-project-root . "d:/projects/hledger")
      (dante-project-root . d:\\projects\\hledger)
      (intero-project-root . "d:/projects/tdd/haskell-calc-kata")
