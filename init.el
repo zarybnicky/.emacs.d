@@ -36,7 +36,6 @@
         solarized-theme
         typing
         unbound
-        vimgolf
         yasnippet))
 
 (dolist (p my-packages)
@@ -270,6 +269,7 @@
      (lambda ()
        (tide-setup)
        (flycheck-mode +1)
+       (setq typescript-indent-level 2)
        (setq flycheck-check-syntax-automatically '(save mode-enabled))
        (eldoc-mode +1)
        (company-mode +1)
@@ -447,6 +447,7 @@
 (define-key global-map "\M-Q" 'unfill-paragraph)
 
 ;; Open files in Docker containers like so: /docker:drunk_bardeen:/etc/passwd
+(require 'tramp)
 (push
  (cons
   "docker"
@@ -486,8 +487,8 @@ buffer is not visiting a file."
   :ensure t
   :commands (flyspell-mode flyspell-prog-mode)
   :init
-  (add-hook 'prog-mode-hook 'flyspell-prog-mode)
-  (add-hook 'text-mode-hook 'flyspell-mode)
+  ;; (remove-hook 'prog-mode-hook 'flyspell-prog-mode)
+  ;; (add-hook 'text-mode-hook 'flyspell-mode)
   :config
   (cond
    ((executable-find "aspell")
