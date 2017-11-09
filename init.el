@@ -258,25 +258,24 @@
   :mode "\\.json\\'")
 
 (use-package tide
-    :ensure t
-    :mode ("\\.ts\\'" . typescript-mode)
-    :init
-    (setq-default typescript-indent-level 2)
-    (setq-default typescript-expr-indent-offset 2)
-    :config
-    (add-hook
-     'typescript-mode-hook
-     (lambda ()
-       (tide-setup)
-       (flycheck-mode +1)
-       (setq typescript-indent-level 2)
-       (setq flycheck-check-syntax-automatically '(save mode-enabled))
-       (eldoc-mode +1)
-       (company-mode +1)
-       (add-hook 'before-save-hook 'tide-format-before-save)
-       (setq company-tooltip-align-annotations t)
-       (tide-hl-identifier-mode))))
-
+  :ensure t
+  :mode ("\\.ts\\'" . typescript-mode)
+  :preface
+  (defun tide-setup ()
+    (tide-setup)
+    (flycheck-mode +1)
+    (setq typescript-indent-level 2)
+    (setq flycheck-check-syntax-automatically '(save mode-enabled))
+    (eldoc-mode +1)
+    (company-mode +1)
+    (add-hook 'before-save-hook 'tide-format-before-save)
+    (setq company-tooltip-align-annotations t)
+    (tide-hl-identifier-mode))
+  :init
+  (setq-default typescript-indent-level 2)
+  (setq-default typescript-expr-indent-offset 2)
+  :config
+  (tide-setup))
 
 (setq-default flycheck-checker-error-threshold 2000)
 
