@@ -320,16 +320,18 @@
     :init
     (add-hook 'haskell-mode-hook 'projectile-mode)
     (add-hook 'haskell-mode-hook 'flycheck-mode)
-    (add-hook 'haskell-mode-hook 'intero-mode)
+    (add-hook 'haskell-mode-hook 'dante-mode)
     (add-hook 'haskell-mode-hook 'hindent-mode)
-    (use-package intero
-      :ensure t
-      :commands 'intero-mode
-      :config
-      (flycheck-add-next-checker 'intero '(warning . haskell-hlint)))
-    ;; (use-package dante
+    ;; (use-package intero
     ;;   :ensure t
-    ;;   :commands 'dante-mode)
+    ;;   :commands 'intero-mode
+    ;;   :config
+    ;;   (flycheck-add-next-checker 'intero '(warning . haskell-hlint)))
+    (use-package dante
+      :ensure t
+      :commands 'dante-mode
+      :config
+      (flycheck-add-next-checker 'haskell-dante '(warning . haskell-hlint)))
     (use-package hindent
       :ensure t
       :commands 'hindent-mode))
@@ -517,7 +519,7 @@ buffer is not visiting a file."
  '(bmkp-last-as-first-bookmark-file "~\\.emacs.d\\bookmarks")
  '(package-selected-packages
    (quote
-    (yaml-mode flycheck-yamllint tide shakespeare-mode hledger-mode alert mediawiki intero hindent dante hasky-stack hasky-extensions haskell-mode yasnippet web-mode vimgolf use-package undo-tree unbound typing solarized-theme smex smart-mode-line sicp rainbow-delimiters projectile pretty-symbols powerline php-mode magit js2-mode jedi ido-completing-read+ helm guide-key fuzzy flycheck flx-ido expand-region editorconfig discover column-marker color-moccur bookmark+ auctex ag ace-jump-mode)))
+    (markdown-mode yaml-mode flycheck-yamllint tide shakespeare-mode hledger-mode alert mediawiki intero hindent dante hasky-stack hasky-extensions haskell-mode yasnippet web-mode vimgolf use-package undo-tree unbound typing solarized-theme smex smart-mode-line sicp rainbow-delimiters projectile pretty-symbols powerline php-mode magit js2-mode jedi ido-completing-read+ helm guide-key fuzzy flycheck flx-ido expand-region editorconfig discover column-marker color-moccur bookmark+ auctex ag ace-jump-mode)))
  '(safe-local-variable-values
    (quote
     ((eval progn
