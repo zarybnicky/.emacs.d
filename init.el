@@ -262,7 +262,6 @@
   :mode ("\\.ts\\'" . typescript-mode)
   :preface
   (defun tide-setup ()
-    (tide-setup)
     (flycheck-mode +1)
     (setq typescript-indent-level 2)
     (setq flycheck-check-syntax-automatically '(save mode-enabled))
