@@ -230,9 +230,20 @@
         (setq jedi:complete-on-dot t)))
 
                                         ; PHP
+(defun setup-ts ()
+    (tide-setup)
+    (flycheck-mode +1)
+    (setq typescript-indent-level 2)
+    (setq flycheck-check-syntax-automatically '(save mode-enabled))
+    (eldoc-mode +1)
+    (company-mode +1)
+    (add-hook 'before-save-hook 'tide-format-before-save)
+    (setq company-tooltip-align-annotations t)
+    (tide-hl-identifier-mode))
+
 (use-package web-mode
     :ensure t
-    :mode "\\.inc\\'" "\\.html?\\'" "\\.php\\'"
+    :mode "\\.inc\\'" "\\.html?\\'" "\\.php\\'" "\\.tsx\\'"
     :init
     (setq web-mode-engines-alist '(("php" . "\\.inc\\'")))
     (setq web-mode-enable-block-face t)
@@ -242,9 +253,14 @@
       :config
       (flycheck-add-mode 'php 'web-mode)
       (flycheck-add-mode 'php-phpcs 'web-mode)
-      (flycheck-add-mode 'php-phpmd 'web-mode))
+      (flycheck-add-mode 'php-phpmd 'web-mode)
+      (flycheck-add-mode 'typescript-tslint 'web-mode))
     (add-hook 'web-mode-hook 'flycheck-mode)
-    (add-hook 'web-mode-hook 'projectile-mode))
+    (add-hook 'web-mode-hook 'projectile-mode)
+    (add-hook 'web-mode-hook
+          (lambda ()
+            (when (string-equal "tsx" (file-name-extension buffer-file-name))
+              (setup-ts)))))
 
 (use-package js-mode
   :mode "\\.js\\'"
@@ -257,24 +273,22 @@
   :ensure t
   :mode "\\.json\\'")
 
+(use-package yaml-mode
+  :ensure t
+  :mode "\\.json\\'")
+
+(use-package nix-mode
+  :ensure t
+  :mode "\\.nix\\'")
+
 (use-package tide
   :ensure t
   :mode ("\\.ts\\'" . typescript-mode)
-  :preface
-  (defun tide-setup ()
-    (flycheck-mode +1)
-    (setq typescript-indent-level 2)
-    (setq flycheck-check-syntax-automatically '(save mode-enabled))
-    (eldoc-mode +1)
-    (company-mode +1)
-    (add-hook 'before-save-hook 'tide-format-before-save)
-    (setq company-tooltip-align-annotations t)
-    (tide-hl-identifier-mode))
   :init
   (setq-default typescript-indent-level 2)
   (setq-default typescript-expr-indent-offset 2)
   :config
-  (tide-setup))
+  (add-hook 'typescript-mode-hook 'setup-ts))
 
 (setq-default flycheck-checker-error-threshold 2000)
 
@@ -299,7 +313,10 @@
     (add-hook 'php-mode-hook (lambda () (hs-minor-mode t))))
 
 (setq-default nxml-child-indent 4)
+
+(require 'projectile)
 (setq-default projectile-tags-command "ctags-exuberant -Re -f %s %s")
+(add-to-list 'projectile-globally-ignored-directories "build")
 
                                         ; AUCTeX
 (setq TeX-auto-save t)
@@ -330,7 +347,7 @@
       :ensure t
       :commands 'dante-mode
       :config
-      (flycheck-add-next-checker 'haskell-dante '(warning . haskell-hlint)))
+      (add-to-list 'flycheck-checkers 'haskell-dante 'append))
     (use-package hindent
       :ensure t
       :commands 'hindent-mode))
