@@ -243,7 +243,7 @@
 
 (use-package web-mode
     :ensure t
-    :mode "\\.inc\\'" "\\.html?\\'" "\\.php\\'" "\\.tsx\\'"
+    :mode "\\.inc\\'" "\\.html?\\'" "\\.tsx\\'"
     :init
     (setq web-mode-engines-alist '(("php" . "\\.inc\\'")))
     (setq web-mode-enable-block-face t)
@@ -268,6 +268,13 @@
   (add-hook 'js-mode-hook 'flycheck-mode)
   (add-hook 'js-mode-hook 'projectile-mode)
   (setq-default js-switch-indent-offset 2))
+
+(use-package coffee-mode
+  :mode "\\.coffee\\'"
+  :ensure t
+  :init
+  (add-hook 'coffee-mode-hook 'flycheck-mode)
+  (add-hook 'coffee-mode-hook 'projectile-mode))
 
 (use-package json-mode
   :ensure t
@@ -294,7 +301,7 @@
 
 (use-package php-mode
     :ensure t
-;;    :mode ("\\.php" . php-mode)
+    :mode ("\\.php" . php-mode)
     :bind (:map php-mode-map
                 ("C-c <left>"  . hs-hide-block)
                 ("C-c <right>" . hs-show-block)
@@ -308,6 +315,7 @@
     :config
     (use-package hideshow
         :diminish)
+    (add-to-list 'hs-special-modes-alist '(php-mode "{" "}" "/[*/]"))
     (add-hook 'php-mode-hook 'flycheck-mode)
     (add-hook 'php-mode-hook 'projectile-mode)
     (add-hook 'php-mode-hook (lambda () (hs-minor-mode t))))
@@ -527,35 +535,177 @@ buffer is not visiting a file."
       (ispell-change-dictionary lang)))
   (global-set-key [f7] 'cycle-ispell-languages))
 
+
+;; Fira Code
+(when (find-font (font-spec :name "Fira Code"))
+  (add-hook 'after-make-frame-functions
+            (lambda (frame)
+                (set-frame-font "Fira Code")
+                (set-fontset-font t '(#Xe100 . #Xe16f) "Fira Code Symbol")))
+  (set-frame-font "Fira Code")
+  (set-fontset-font t '(#Xe100 . #Xe16f) "Fira Code Symbol")
+
+  (defconst fira-code-font-lock-keywords-alist
+    (mapcar (lambda (regex-char-pair)
+              `(,(car regex-char-pair)
+                (0 (prog1 ()
+                     (compose-region (match-beginning 1)
+                                     (match-end 1)
+                                     ,(concat "	" (list (decode-char 'ucs (cadr regex-char-pair)))))))))
+            '(("\\(www\\)"                   #Xe100)
+              ("[^/]\\(\\*\\*\\)[^/]"        #Xe101)
+              ("\\(\\*\\*\\*\\)"             #Xe102)
+              ("\\(\\*\\*/\\)"               #Xe103)
+              ("\\(\\*>\\)"                  #Xe104)
+              ("[^*]\\(\\*/\\)"              #Xe105)
+              ("\\(\\\\\\\\\\)"              #Xe106)
+              ("\\(\\\\\\\\\\\\\\)"          #Xe107)
+              ("\\({-\\)"                    #Xe108)
+              ("\\(\\[\\]\\)"                #Xe109)
+              ("\\(::\\)"                    #Xe10a)
+              ("\\(:::\\)"                   #Xe10b)
+              ("[^=]\\(:=\\)"                #Xe10c)
+              ("\\(!!\\)"                    #Xe10d)
+              ("\\(!=\\)"                    #Xe10e)
+              ("\\(!==\\)"                   #Xe10f)
+              ("\\(-}\\)"                    #Xe110)
+              ("\\(--\\)"                    #Xe111)
+              ("\\(---\\)"                   #Xe112)
+              ("\\(-->\\)"                   #Xe113)
+              ("[^-]\\(->\\)"                #Xe114)
+              ("\\(->>\\)"                   #Xe115)
+              ("\\(-<\\)"                    #Xe116)
+              ("\\(-<<\\)"                   #Xe117)
+              ("\\(-~\\)"                    #Xe118)
+              ("\\(#{\\)"                    #Xe119)
+              ("\\(#\\[\\)"                  #Xe11a)
+              ("\\(##\\)"                    #Xe11b)
+              ("\\(###\\)"                   #Xe11c)
+              ("\\(####\\)"                  #Xe11d)
+              ("\\(#(\\)"                    #Xe11e)
+              ("\\(#\\?\\)"                  #Xe11f)
+              ("\\(#_\\)"                    #Xe120)
+              ("\\(#_(\\)"                   #Xe121)
+              ("\\(\\.-\\)"                  #Xe122)
+              ("\\(\\.=\\)"                  #Xe123)
+              ("\\(\\.\\.\\)"                #Xe124)
+              ("\\(\\.\\.<\\)"               #Xe125)
+              ("\\(\\.\\.\\.\\)"             #Xe126)
+              ("\\(\\?=\\)"                  #Xe127)
+              ("\\(\\?\\?\\)"                #Xe128)
+              ("\\(;;\\)"                    #Xe129)
+              ("\\(/\\*\\)"                  #Xe12a)
+              ("\\(/\\*\\*\\)"               #Xe12b)
+              ("\\(/=\\)"                    #Xe12c)
+              ("\\(/==\\)"                   #Xe12d)
+              ("\\(/>\\)"                    #Xe12e)
+              ("\\(//\\)"                    #Xe12f)
+              ("\\(///\\)"                   #Xe130)
+              ("\\(&&\\)"                    #Xe131)
+              ("\\(||\\)"                    #Xe132)
+              ("\\(||=\\)"                   #Xe133)
+              ("[^|]\\(|=\\)"                #Xe134)
+              ("\\(|>\\)"                    #Xe135)
+              ("\\(\\^=\\)"                  #Xe136)
+              ("\\(\\$>\\)"                  #Xe137)
+              ("\\(\\+\\+\\)"                #Xe138)
+              ("\\(\\+\\+\\+\\)"             #Xe139)
+              ("\\(\\+>\\)"                  #Xe13a)
+              ("\\(=:=\\)"                   #Xe13b)
+              ("[^!/]\\(==\\)[^>]"           #Xe13c)
+              ("\\(===\\)"                   #Xe13d)
+              ("\\(==>\\)"                   #Xe13e)
+              ("[^=]\\(=>\\)"                #Xe13f)
+              ("\\(=>>\\)"                   #Xe140)
+              ("\\(<=\\)"                    #Xe141)
+              ("\\(=<<\\)"                   #Xe142)
+              ("\\(=/=\\)"                   #Xe143)
+              ("\\(>-\\)"                    #Xe144)
+              ("\\(>=\\)"                    #Xe145)
+              ("\\(>=>\\)"                   #Xe146)
+              ("[^-=]\\(>>\\)"               #Xe147)
+              ("\\(>>-\\)"                   #Xe148)
+              ("\\(>>=\\)"                   #Xe149)
+              ("\\(>>>\\)"                   #Xe14a)
+              ("\\(<\\*\\)"                  #Xe14b)
+              ("\\(<\\*>\\)"                 #Xe14c)
+              ("\\(<|\\)"                    #Xe14d)
+              ("\\(<|>\\)"                   #Xe14e)
+              ("\\(<\\$\\)"                  #Xe14f)
+              ("\\(<\\$>\\)"                 #Xe150)
+              ("\\(<!--\\)"                  #Xe151)
+              ("\\(<-\\)"                    #Xe152)
+              ("\\(<--\\)"                   #Xe153)
+              ("\\(<->\\)"                   #Xe154)
+              ("\\(<\\+\\)"                  #Xe155)
+              ("\\(<\\+>\\)"                 #Xe156)
+              ("\\(<=\\)"                    #Xe157)
+              ("\\(<==\\)"                   #Xe158)
+              ("\\(<=>\\)"                   #Xe159)
+              ("\\(<=<\\)"                   #Xe15a)
+              ("\\(<>\\)"                    #Xe15b)
+              ("[^-=]\\(<<\\)"               #Xe15c)
+              ("\\(<<-\\)"                   #Xe15d)
+              ("\\(<<=\\)"                   #Xe15e)
+              ("\\(<<<\\)"                   #Xe15f)
+              ("\\(<~\\)"                    #Xe160)
+              ("\\(<~~\\)"                   #Xe161)
+              ("\\(</\\)"                    #Xe162)
+              ("\\(</>\\)"                   #Xe163)
+              ("\\(~@\\)"                    #Xe164)
+              ("\\(~-\\)"                    #Xe165)
+              ("\\(~=\\)"                    #Xe166)
+              ("\\(~>\\)"                    #Xe167)
+              ("[^<]\\(~~\\)"                #Xe168)
+              ("\\(~~>\\)"                   #Xe169)
+              ("\\(%%\\)"                    #Xe16a)
+              ;; ("\\(x\\)"                   #Xe16b) This ended up being hard to do properly so i'm leaving it out.
+              ("[^:=]\\(:\\)[^:=]"           #Xe16c)
+              ("[^\\+<>]\\(\\+\\)[^\\+<>]"   #Xe16d)
+              ("[^\\*/<>]\\(\\*\\)[^\\*/<>]" #Xe16f))))
+  (defun add-fira-code-symbol-keywords ()
+    (font-lock-add-keywords nil fira-code-font-lock-keywords-alist))
+  (add-hook 'prog-mode-hook #'add-fira-code-symbol-keywords))
+
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(bmkp-last-as-first-bookmark-file "~\\.emacs.d\\bookmarks")
+ '(bmkp-last-as-first-bookmark-file "~/.emacs.d/bookmarks")
  '(package-selected-packages
    (quote
-    (markdown-mode yaml-mode flycheck-yamllint tide shakespeare-mode hledger-mode alert mediawiki intero hindent dante hasky-stack hasky-extensions haskell-mode yasnippet web-mode vimgolf use-package undo-tree unbound typing solarized-theme smex smart-mode-line sicp rainbow-delimiters projectile pretty-symbols powerline php-mode magit js2-mode jedi ido-completing-read+ helm guide-key fuzzy flycheck flx-ido expand-region editorconfig discover column-marker color-moccur bookmark+ auctex ag ace-jump-mode)))
+    (coffee-mode image+ midi-kbd textile-mode markdown-mode yaml-mode flycheck-yamllint tide shakespeare-mode hledger-mode alert mediawiki intero hindent dante hasky-stack hasky-extensions haskell-mode yasnippet web-mode vimgolf use-package undo-tree unbound typing solarized-theme smex smart-mode-line sicp rainbow-delimiters projectile pretty-symbols powerline php-mode magit js2-mode jedi ido-completing-read+ helm guide-key fuzzy flycheck flx-ido expand-region editorconfig discover column-marker color-moccur bookmark+ auctex ag ace-jump-mode)))
  '(safe-local-variable-values
    (quote
-    ((eval progn
+    ((buffer-file-coding-system . utf-8-unix)
+     (intero-project-root . "/home/inuits/ig-marketing")
+     (intero-project-root . "d:/projects/starlet")
+     (intero-project-root . "/home/inuits/iis")
+     (hindent-style)
+     (haskell-language-extensions "-XRecursiveDo")
+     (dante-repl-command-line "nix-shell" "-A" "shells.ghc" "--run" "cabal new-repl starlet-backend")
+     (dante-repl-command-line "nix-shell" "-A" "shells.ghc" "--run" "cabal new-repl starlet-shared")
+     (dante-target . "starlet-shared")
+     (dante-repl-command-line "nix-shell" "-A" "shells.ghc" "--run" "cabal new-repl starlet-frontend")
+     (dante-target . "starlet-frontend")
+     (dante-repl-command-line "stack" "repl" dante-target)
+     (dante-target . "starlet-backend")
+     (eval progn
            (add-to-list
             (quote exec-path)
             (concat
              (locate-dominating-file default-directory ".dir-locals.el")
              "node_modules/.bin/")))
-     (intero-project-root . "d:/projects/starlet")
+     (dante-project-root . "~/starlet")
      (haskell-process-use-ghci . t)
      (haskell-indent-spaces . 4)
-     (intero-project-root . "d:/projects/hledger")
      (dante-project-root . "d:/projects/hledger")
      (dante-project-root . d:\\projects\\hledger)
-     (intero-project-root . "d:/projects/tdd/haskell-calc-kata")
      (dante-project-root . "d:/projects/tdd/haskell-calc-kata")
-     (intero-project-root . "d:/projects/tdd/haskell-calc")
      (dante-project-root . "d:/projects/tdd/haskell-calc")
      (dante-project-root . "d:/projects/opinion-extraction")
-     (intero-project-root . "d:/projects/ner-czech")
      (dante-project-root . "d:/projects/ner-czech")))))
 
 (custom-set-faces
