@@ -668,6 +668,11 @@ buffer is not visiting a file."
     (font-lock-add-keywords nil fira-code-font-lock-keywords-alist))
   (add-hook 'prog-mode-hook #'add-fira-code-symbol-keywords))
 
+(put 'intero-project-root 'safe-local-variable #'stringp)
+(put 'dante-project-root 'safe-local-variable #'stringp)
+(put 'dante-repl-command-line 'safe-local-variable #'stringp)
+(put 'dante-target 'safe-local-variable #'stringp)
+(put 'haskell-language-extensions 'safe-local-variable #'stringp)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -681,33 +686,15 @@ buffer is not visiting a file."
  '(safe-local-variable-values
    (quote
     ((buffer-file-coding-system . utf-8-unix)
-     (intero-project-root . "/home/inuits/ig-marketing")
-     (intero-project-root . "d:/projects/starlet")
-     (intero-project-root . "/home/inuits/iis")
      (hindent-style)
-     (haskell-language-extensions "-XRecursiveDo")
-     (dante-repl-command-line "nix-shell" "-A" "shells.ghc" "--run" "cabal new-repl starlet-backend")
-     (dante-repl-command-line "nix-shell" "-A" "shells.ghc" "--run" "cabal new-repl starlet-shared")
-     (dante-target . "starlet-shared")
-     (dante-repl-command-line "nix-shell" "-A" "shells.ghc" "--run" "cabal new-repl starlet-frontend")
-     (dante-target . "starlet-frontend")
-     (dante-repl-command-line "stack" "repl" dante-target)
-     (dante-target . "starlet-backend")
      (eval progn
            (add-to-list
             (quote exec-path)
             (concat
              (locate-dominating-file default-directory ".dir-locals.el")
              "node_modules/.bin/")))
-     (dante-project-root . "~/starlet")
      (haskell-process-use-ghci . t)
-     (haskell-indent-spaces . 4)
-     (dante-project-root . "d:/projects/hledger")
-     (dante-project-root . d:\\projects\\hledger)
-     (dante-project-root . "d:/projects/tdd/haskell-calc-kata")
-     (dante-project-root . "d:/projects/tdd/haskell-calc")
-     (dante-project-root . "d:/projects/opinion-extraction")
-     (dante-project-root . "d:/projects/ner-czech")))))
+     (haskell-indent-spaces . 4)))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
