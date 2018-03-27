@@ -26,6 +26,7 @@
         flx-ido
         flycheck
         fuzzy
+        gnuplot-mode
         helm
         projectile
         pretty-symbols
@@ -267,7 +268,8 @@
   :init
   (add-hook 'js-mode-hook 'flycheck-mode)
   (add-hook 'js-mode-hook 'projectile-mode)
-  (setq-default js-switch-indent-offset 2))
+  (setq-default js-switch-indent-offset 2)
+  (setq-default js-indent-level 2))
 
 (use-package coffee-mode
   :mode "\\.coffee\\'"
@@ -309,9 +311,8 @@
                 ("C-c <down>"  . hs-show-all))
     :init
     (setq-default php-mode-coding-style 'symfony2)
-    (setq-default flycheck-phpmd-rulesets (list (concat user-emacs-directory "phpmd.xml")))
-    (setq-default flycheck-phpcs-standard (concat user-emacs-directory "phpcs.xml"))
-    (setq-default flycheck-phpcs-standard "PSR2")
+    (setq-default flycheck-phpmd-rulesets (list (expand-file-name (concat user-emacs-directory "phpmd.xml"))))
+    (setq-default flycheck-phpcs-standard (expand-file-name(concat user-emacs-directory "phpcs.xml")))
     :config
     (use-package hideshow
         :diminish)
