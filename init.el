@@ -440,6 +440,10 @@
 (global-set-key (kbd "S-<right>") (ignore-error-wrapper 'windmove-right))
 (global-set-key (kbd "S-<up>") (ignore-error-wrapper 'windmove-up))
 (global-set-key (kbd "S-<down>") (ignore-error-wrapper 'windmove-down))
+(add-hook 'org-shiftup-final-hook 'windmove-up)
+(add-hook 'org-shiftleft-final-hook 'windmove-left)
+(add-hook 'org-shiftdown-final-hook 'windmove-down)
+(add-hook 'org-shiftright-final-hook 'windmove-right)
 
                                         ; Expand-region
 (use-package expand-region
